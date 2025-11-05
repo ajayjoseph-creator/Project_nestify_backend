@@ -19,9 +19,13 @@ const httpServer = createServer(app); // Wrap express with httpServer
 
 // ----------------- 🧠 Middleware Setup -----------------
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: [
+    "https://project-nestify.vercel.app",
+    "https://project-nestify-git-main-ajay-josephs-projects.vercel.app",
+    "https://project-nestify-pu2pwsnak-ajay-josephs-projects.vercel.app"
+  ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 app.use(express.json());
 app.use(morgan('dev'));
@@ -40,7 +44,11 @@ app.use("/api/admin", adminRoutes);
 // ----------------- 🔌 SOCKET.IO SETUP -----------------
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: [
+      "https://project-nestify.vercel.app",
+      "https://project-nestify-git-main-ajay-josephs-projects.vercel.app",
+      "https://project-nestify-pu2pwsnak-ajay-josephs-projects.vercel.app"
+    ],
     methods: ["GET", "POST"]
   }
 });
@@ -76,5 +84,5 @@ io.on("connection", (socket) => {
 // ----------------- 🚀 Start Server -----------------
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
-  console.log(`🚀 Server Running on http://localhost:${PORT}`);
+ console.log(`🚀 Server Running on port ${PORT}`);
 });
