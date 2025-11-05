@@ -1,10 +1,9 @@
 import User from "../models/User.js";
 
-
 // 📌 Activate subscription
 export const activateSubscription = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, plan, price } = req.body;
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -15,8 +14,10 @@ export const activateSubscription = async (req, res) => {
 
     user.subscription = {
       active: true,
+      plan: plan || "premium",
+      price: price || 299,
       startDate: now,
-      nextBillingDate: nextBillingDate,
+      nextBillingDate,
     };
 
     await user.save();
@@ -38,6 +39,8 @@ export const cancelSubscription = async (req, res) => {
 
     user.subscription = {
       active: false,
+      plan: null,
+      price: null,
       startDate: null,
       nextBillingDate: null,
     };
@@ -51,13 +54,18 @@ export const cancelSubscription = async (req, res) => {
   }
 };
 
-// 📌 Check subscription status (optional)
+// 📌 Check subscription (with automatic expiry)
 export const checkSubscription = async (req, res) => {
   try {
-    const userId = req.params.userId;
-
+    const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
+
+    // ✅ Automatic expiry
+    if (user.subscription?.active && new Date() > new Date(user.subscription.nextBillingDate)) {
+      user.subscription.active = false;
+      await user.save();
+    }
 
     res.status(200).json({ subscription: user.subscription });
   } catch (err) {
