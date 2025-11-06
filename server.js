@@ -44,12 +44,14 @@ app.use("/api/admin", adminRoutes);
 // ----------------- 🔌 SOCKET.IO SETUP -----------------
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://project-nestify.vercel.app",
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: [
+      "https://project-nestify.vercel.app",
+      "https://project-nestify-git-main-ajay-josephs-projects.vercel.app",
+      "https://project-nestify-pu2pwsnak-ajay-josephs-projects.vercel.app"
+    ],
+    methods: ["GET", "POST"]
   }
 });
-
 
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
